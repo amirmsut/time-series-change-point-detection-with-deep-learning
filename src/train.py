@@ -1,8 +1,7 @@
+
 """
-STEP 4 — Training
-====================
 چرا این مرحله لازم است؟
-اینجا مدل واقعاً "یاد می‌گیرد"
+اینجا مدل واقعاً "یاد می‌گیرد".
 
 1) Class imbalance: چون تعداد پنجره‌های label=1 خیلی کمتر از label=0 است،
    از `pos_weight` در BCELoss استفاده می‌کنیم تا مدل بیش از حد به سمت
@@ -97,4 +96,22 @@ def train_model(epochs=25, window_size=64, batch_size=64, lr=1e-3,
 
 
 if __name__ == "__main__":
-    train_model(epochs=25)
+    import matplotlib.pyplot as plt
+
+    model, history = train_model(epochs=25)
+
+    # ---- پلات loss curve: مهم‌ترین ابزار برای دیدن overfitting ----
+    # اگر val_loss از یه جایی به بعد شروع کنه به بالا رفتن درحالی‌که train_loss
+    # همچنان پایین میاد، یعنی مدل داره روی داده‌ی train حفظ می‌کنه (overfit).
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot(history["train_loss"], label="Train Loss")
+    ax.plot(history["val_loss"], label="Validation Loss")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    ax.set_title("Training Curve")
+    ax.legend()
+    plt.tight_layout()
+
+    loss_curve_path = os.path.join(THIS_DIR, "..", "results", "loss_curve.png")
+    plt.savefig(loss_curve_path, dpi=130)
+    print(f"Loss curve saved to {loss_curve_path}")
